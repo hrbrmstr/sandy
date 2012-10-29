@@ -47,7 +47,7 @@ map("state", boundary = FALSE, col="gray", add = TRUE,xlim=xlim,ylim=ylim)
 
 # Read & plot coarse state names
 states = read.csv("http://dl.dropbox.com/s/8f9wv19w5j4l0st/states-capitols.csv")
-text(x=states$Longitude,y=states$Latitude,states$State,col="#BFB093",cex=0.5,font=1,adj=c(1,0))
+text(x=states$Longitude,y=states$Latitude,states$State,col="#BFB093",cex=0.33,font=1,adj=c(1,0))
 
 # plot the track with diamonds and colors
 lines(x=wx$Longitude,y=wx$Latitude,col="black",cex=0.75)
@@ -84,7 +84,7 @@ coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
 polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
 
 # annotate it with the current & projects strength status + forecast
-text(x=wx$Longitude,y=wx$Latitude,col='#0A2140',border="white",labels=wx$Status,adj=c(-.15),cex=0.4,font=2)
+text(x=wx$Longitude,y=wx$Latitude,col='#0A2140',labels=wx$Status,adj=c(-.15),cex=0.4,font=2)
 
 # Annotate with track file date & storm name
 text(x=-84.5,y=49.5,trackData[1],col="#037F8C",cex=0.65,font=2,adj=c(0,0))
@@ -96,7 +96,7 @@ text(x=-70.0,y=39.5,sprintf("Wind Speed: %3d mph",wx$WindSpeed[currLoc]),col="#0
 text(x=-70.0,y=39.0,sprintf("Pressure: %s mmHg",wx$Pressure[currLoc]),col="#037F8C",cex=0.65,font=2,adj=c(0,0))
 
 # Annotate with plot date/time
-text(x=-67.25,y=30.25,sprintf("Plotted at: %s",Sys.time()),col="#037F8C",cex=0.65,font=1,adj=c(0,0))
+text(x=-68.5,y=30.25,sprintf("Plotted at: %s",Sys.time()),col="#037F8C",cex=0.65,font=1,adj=c(0,0))
 
 # no one puts Sandy in a box (well, we do)
 box()
