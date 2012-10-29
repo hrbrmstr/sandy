@@ -44,13 +44,20 @@ points(x=wx$Longitude,y=wx$Latitude,col=wx$color,bg=wx$color,pch=23,cex=0.75)
 
 # this gets the cone and makes it into a string that getKMLcoordinates can process
 # 3-day
-#coneKML = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/three_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+coneKML3 = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/three_day_cone.kmz | funzip", intern = TRUE)),collapse="")
 
 # 5-day
-coneKML = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/five_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+coneKML5 = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/five_day_cone.kmz | funzip", intern = TRUE)),collapse="")
 
 # process the coneKML and make a data frame (lat/long/elevation coords) out of it
-coords = getKMLcoordinates(textConnection(coneKML))
+coords = getKMLcoordinates(textConnection(coneKML5))
+coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
+
+# this plots the cone and leaves the track visible
+polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
+
+# process the coneKML and make a data frame (lat/long/elevation coords) out of it
+coords = getKMLcoordinates(textConnection(coneKML3))
 coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
 
 # this plots the cone and leaves the track visible
