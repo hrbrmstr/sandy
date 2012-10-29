@@ -23,20 +23,18 @@ wx$Status = trim.trailing(paste(wx$Status,wx$a," "))
 # cheap way to make past plots one color and forecast plots another
 wx$color = "red"
 wx$color[grep("\\+",wx$Advisory)] = "orange"
-
+h
 # only want part of the map
-xlim=c(-90,-60)
+xlim=c(-85,-60)
+ylim=c(30,50)
 
 # plot the map itself
-map("state", interior = FALSE, xlim=xlim)
-map("state", boundary = FALSE, col="gray", add = TRUE,xlim=xlim)
+map("state", interior = FALSE, xlim=xlim, ylim=ylim)
+map("state", boundary = FALSE, col="gray", add = TRUE,xlim=xlim,ylim=ylim)
 
-# plot the track with triangles and colors
+# plot the track with diamonds and colors
 lines(x=wx$Longitude,y=wx$Latitude,col="black",cex=0.75)
-points(x=wx$Longitude,y=wx$Latitude,col=wx$color,pch=17,cex=0.75)
-
-# annotate it with the current & projects strength status + forecast
-text(x=wx$Longitude,y=wx$Latitude,col='blue',labels=wx$Status,adj=c(-.15),cex=0.33)
+points(x=wx$Longitude,y=wx$Latitude,col=wx$color,bg=wx$color,pch=23,cex=0.75)
 
 # get the forecast "cone" from the KML that google's crisis map provides
 # NOTE: you need curl & unzip (with funzip) on your system
@@ -45,7 +43,11 @@ text(x=wx$Longitude,y=wx$Latitude,col='blue',labels=wx$Status,adj=c(-.15),cex=0.
 #       want to save this for posterity
 
 # this gets the cone and makes it into a string that getKMLcoordinates can process
-coneKML = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/three_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+# 3-day
+#coneKML = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/three_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+
+# 5-day
+coneKML = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/five_day_cone.kmz | funzip", intern = TRUE)),collapse="")
 
 # process the coneKML and make a data frame out of it
 coords = getKMLcoordinates(textConnection(coneKML))
@@ -53,6 +55,9 @@ coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
 
 # this plots the cone and leaves the track visible
 polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
+
+# annotate it with the current & projects strength status + forecast
+text(x=wx$Longitude,y=wx$Latitude,col='blue',labels=wx$Status,adj=c(-.15),cex=0.33)
 
 # no one puts Sandy in a box (but me)
 box()
