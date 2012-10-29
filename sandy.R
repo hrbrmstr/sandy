@@ -38,7 +38,7 @@ points(x=wx$Longitude,y=wx$Latitude,col=wx$color,bg=wx$color,pch=23,cex=0.75)
 
 # get the forecast "cone" from the KML that google's crisis map provides
 # NOTE: you need curl & unzip (with funzip) on your system
-# NOTE: Google didn't uniquely name the cone they provide, so this will break
+# NOTE: Google didn't uniquely name the cone(s) they provide, so this will break
 #       post-Sandy. I suggest saving the last KML & track files out out if you
 #       want to save this for posterity
 
@@ -49,7 +49,7 @@ points(x=wx$Longitude,y=wx$Latitude,col=wx$color,bg=wx$color,pch=23,cex=0.75)
 # 5-day
 coneKML = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/five_day_cone.kmz | funzip", intern = TRUE)),collapse="")
 
-# process the coneKML and make a data frame out of it
+# process the coneKML and make a data frame (lat/long/elevation coords) out of it
 coords = getKMLcoordinates(textConnection(coneKML))
 coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
 
@@ -59,5 +59,5 @@ polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
 # annotate it with the current & projects strength status + forecast
 text(x=wx$Longitude,y=wx$Latitude,col='blue',labels=wx$Status,adj=c(-.15),cex=0.33)
 
-# no one puts Sandy in a box (but me)
+# no one puts Sandy in a box (well, we do)
 box()
