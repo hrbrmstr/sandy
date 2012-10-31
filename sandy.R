@@ -64,24 +64,26 @@ points(x=wx$Longitude,y=wx$Latitude,col=wx$color,bg=wx$color,pch=23,cex=0.75)
 # these get the cone(s) and makes them into strings that getKMLcoordinates can process
 
 # 3-day cone
-coneKML3 = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/three_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+# this was originally using the Google data, but we have to use the static NHC data now which is on the 5-day cone
+#coneKML3 = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/three_day_cone.kmz | funzip", intern = TRUE)),collapse="")
 
 # 5-day cone
-coneKML5 = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/five_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+# had to switch to the NHC code data
+#coneKML5 = paste(unlist(system("curl -s -o - http://mw1.google.com/mw-weather/maps_hurricanes/five_day_cone.kmz | funzip", intern = TRUE)),collapse="")
+coneKML5 = paste(unlist(system("curl -s -o - http://www.nhc.noaa.gov/storm_graphics/api/AL182012_031adv_CONE.kmz | funzip", intern = TRUE)),collapse="")
 
 # process the coneKML and make a data frame (lat/long/elevation coords) out of it
-coords = getKMLcoordinates(textConnection(coneKML5))
-coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
+coords = getKMLcoordinates(textConnection(coneKML5),ignoreAltitude=TRUE)
+coords = data.frame(SpatialPoints(coords[1], CRS('+proj=longlat')))
 
 # this plots the cone and leaves the track visible
 polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
 
 # process the coneKML and make a data frame (lat/long/elevation coords) out of it
-coords = getKMLcoordinates(textConnection(coneKML3))
-coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
+#coords = getKMLcoordinates(textConnection(coneKML3))
 
 # this plots the cone and leaves the track visible
-polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
+#polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
 
 # annotate it with the current & projects strength status + forecast
 text(x=wx$Longitude,y=wx$Latitude,col='#0A2140',labels=wx$Status,adj=c(-.15),cex=0.4,font=2)
@@ -101,4 +103,11 @@ text(x=-68.5,y=30.25,sprintf("Plotted at: %s",Sys.time()),col="#037F8C",cex=0.65
 # no one puts Sandy in a box (well, we do)
 box()
 
+trackKML = paste(unlist(system("curl -s -o - http://www.nhc.noaa.gov/storm_graphics/api/AL182012_031adv_TRACK.kmz | funzip", intern = TRUE)),collapse="")
 
+# process the coneKML and make a data frame (lat/long/elevation coords) out of it
+coords = getKMLcoordinates(textConnection(trackKML),ignoreAltitude=TRUE)
+coords = data.frame(SpatialPoints(coords, CRS('+proj=longlat')))
+
+# this plots the cone and leaves the track visible
+polygon(coords$X1,coords$X2, pch=16, border="red", col='#FF000033',cex=0.25)
